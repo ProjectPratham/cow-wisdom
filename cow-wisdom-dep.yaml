@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cow-wisdom-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cow-wisdom
+  template:
+    metadata:
+      labels:
+        app: cow-wisdom
+    spec:
+      containers:
+        - name: cow-wisdom
+          image: pratham0416/wisecow:latest
+          ports:
+            - containerPort: 4499

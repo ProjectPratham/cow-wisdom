@@ -1,0 +1,37 @@
+name: CD Pipeline - Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch (e.g., 'master')
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Runs on the latest Ubuntu GitHub Actions runner
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up kubectl (Kubernetes CLI)
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'v1.21.0'  # Use the desired kubectl version
+
+      # Step 3: Configure kubectl to access your Kubernetes cluster
+      - name: Set up Kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+
+      # Step 4: Update the Deployment with the new Docker image
+      - name: Update Kubernetes Deployment with new Docker image
+        run: |
+          kubectl set image deployment/cow-wisdom-deployment cow-wisdom=pratham0416/wisecow:latest  # Use your image and tag here
+
+      # Step 5: (Optional) Verify the deployment
+      - name: Verify Deployment
+        run: |
+          kubectl rollout status deployment/cow-wisdom-deployment  # Ensure the deployment succeeds

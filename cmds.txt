@@ -1,0 +1,9 @@
+ingress
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+add cert manager helm repo
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+install cet manager
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.10.0/cert-manager.yaml

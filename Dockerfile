@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install && apt install \
     git -y
     
 
-# Set working directory
+# Set working director
 WORKDIR /app
 
 # Clone your GitHub repository (replace with your actual repo)

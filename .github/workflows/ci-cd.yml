@@ -23,8 +23,8 @@ jobs:
       # Step 3: Configure kubectl to access your Kubernetes cluster
       - name: Set up Kubeconfig
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
+            echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig.yaml
+            export KUBECONFIG=kubeconfig.yaml
 
       # Step 4: Update the Deployment with the new Docker image
       - name: Update Kubernetes Deployment with new Docker image

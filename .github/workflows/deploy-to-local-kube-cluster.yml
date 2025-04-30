@@ -63,5 +63,25 @@ jobs:
                 Start-Sleep -Seconds $interval
             }
       - name: Deploy to Kubernetes
-        run: kubectl apply -f k8/
+        run: |
+          $startTime = Get-Date
+          $timeout = New-TimeSpan -Minutes 5
+          $success = $false
+          while ((Get-Date) - $startTime -lt $timeout) {
+            try {
+              # Attempt to apply the Kubernetes resources
+              kubectl apply -f k8/
+              $success = $true
+              Write-Host "Successfully applied Kubernetes resources."
+              break
+            } catch {
+              Write-Host "Attempt failed. Retrying..."
+            }
+            Start-Sleep -Seconds 10  # Wait 10 seconds before retrying
+          }
+
+          if (-not $success) {
+            Write-Host "Deployment failed after 5 minutes."
+            exit 1  # Fail the step after the timeout
+          }
 

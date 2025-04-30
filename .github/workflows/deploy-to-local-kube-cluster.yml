@@ -27,7 +27,6 @@ jobs:
         run: kubectl cluster-info
 
       - name: Conditionally install cert-manager
-        shell: bash
         run: |
           if ! kubectl get ns cert-manager &> /dev/null; then
             echo "Installing cert-manager..."
@@ -37,7 +36,6 @@ jobs:
           fi
 
       - name: Conditionally install NGINX ingress controller
-        shell: bash
         run: |
           if ! kubectl get ns ingress-nginx &> /dev/null; then
             echo "Installing ingress-nginx..."
@@ -47,6 +45,5 @@ jobs:
           fi
 
       - name: Deploy to Kubernetes
-        shell: bash
         run: kubectl apply -f k8/
 

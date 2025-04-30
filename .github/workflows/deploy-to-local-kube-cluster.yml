@@ -84,4 +84,25 @@ jobs:
             Write-Host "Deployment failed after 5 minutes."
             exit 1  # Fail the step after the timeout
           }
+      - name: Modify Hosts File
+        run: |
+            $hostsFile = "C:\Windows\System32\drivers\etc\hosts"
+            $entry = "127.0.0.1   example.local"
+  
+            # Check if the hosts file exists
+            if (-not (Test-Path $hostsFile)) {
+              Write-Host "Hosts file does not exist."
+              exit 1
+            }
+  
+            # Read the hosts file content and check if the entry already exists
+            $hostsContent = Get-Content -Path $hostsFile
+  
+            if ($hostsContent -contains $entry) {
+              Write-Host "Entry already exists in the hosts file."
+            } else {
+              # Add the entry to the hosts file if it doesn't exist
+              Add-Content -Path $hostsFile -Value $entry
+              Write-Host "Entry added to the hosts file."
+            }
 

@@ -47,4 +47,4 @@ jobs:
           fi
 
       - name: Deploy all Kubernetes manifests
-        run: kubectl apply -f k8s/
+        run: kubectl apply -f k8/

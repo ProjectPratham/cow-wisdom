@@ -15,24 +15,12 @@ on:
 # .github/workflows/deploy-on-arc.yml
 jobs:
   kubernetes-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      # Step 2: Set up kubectl to interact with your local Kubernetes cluster
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      # Step 3: Set KUBECONFIG environment variable from GitHub secret
-      - name: Configure kubectl with Kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
 
       # Step 4: Verify kubectl can access your cluster
       - name: Check Kubernetes cluster

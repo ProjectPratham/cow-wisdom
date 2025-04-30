@@ -15,3 +15,18 @@ kubernetes worflow is performed on self host
 used local docker desktop kubernetes cluster 
 local desktop listens in on workflow triggers and is defined as runner
 
+
+problem 2
+
+application health checker 
+takes a user input for website url and checks if the website is up or down
+
+python problem\ 2/application_health_checker.py
+
+system health monitor
+runs on a linux system to check the system health and resource usage
+
+pipx install psutil
+python problem\ 2/system_health_monitor.py
+
+

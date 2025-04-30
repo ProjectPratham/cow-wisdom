@@ -1,7 +1,7 @@
 # Use a lightweight base image
 FROM ubuntu:latest
 
-# Avoid interactive prompts
+# Avoid interactive prompt
 ENV PATH="${PATH}:/usr/games"
 # Install dependencies
 RUN apt-get update && apt-get install && apt install \

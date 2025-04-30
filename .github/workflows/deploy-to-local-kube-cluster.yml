@@ -28,21 +28,21 @@ jobs:
 
       - name: Conditionally install cert-manager
         run: |
-          if ! kubectl get ns cert-manager &> /dev/null; then
-            echo "Installing cert-manager..."
+           if (-not (kubectl get ns cert-manager -ErrorAction SilentlyContinue)) {
+            Write-Host "Installing cert-manager..."
             kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
-          else
-            echo "cert-manager already installed."
-          fi
+            } else {
+            Write-Host "cert-manager already installed."
+            } 
 
       - name: Conditionally install NGINX ingress controller
         run: |
-          if ! kubectl get ns ingress-nginx &> /dev/null; then
-            echo "Installing ingress-nginx..."
-            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
-          else
-            echo "Ingress NGINX already installed."
-          fi
+          if (-not (kubectl get ns cert-manager -ErrorAction SilentlyContinue)) {
+          Write-Host "Installing cert-manager..."
+          kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+          } else {
+          Write-Host "cert-manager already installed."
+          }
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f k8/

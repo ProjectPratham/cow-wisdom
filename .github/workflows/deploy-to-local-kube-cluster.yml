@@ -14,12 +14,27 @@ on:
 
 # .github/workflows/deploy-on-arc.yml
 jobs:
-  deploy:
-    
-    runs-on: [self-hosted, arc-runner-set]  # Match the label you added in ARC Helm config
+  kubernetes-deploy:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up kubectl to interact with your local Kubernetes cluster
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # Step 3: Set KUBECONFIG environment variable from GitHub secret
+      - name: Configure kubectl with Kubeconfig
+        run: echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
+      # Step 4: Verify kubectl can access your cluster
+      - name: Check Kubernetes cluster
+        run: kubectl cluster-info
 
       - name: Conditionally install cert-manager
         run: |

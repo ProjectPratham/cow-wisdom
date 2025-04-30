@@ -34,7 +34,14 @@ jobs:
             } else {
             Write-Host "cert-manager already installed."
             } 
-
+      - name: Conditionally install NGINX ingress controller
+        run: |
+              if (-not (kubectl get ns ingress-nginx -ErrorAction SilentlyContinue)) {
+                Write-Host "Installing ingress-nginx..."
+                kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+              } else {
+                Write-Host "Ingress NGINX already installed."
+              }
       - name: Reapply Kubernetes manifests until ingress controller is ready
         run: |
             # Set the duration for retries and interval between tries

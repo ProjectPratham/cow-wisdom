@@ -30,7 +30,9 @@ jobs:
 
       # Step 3: Set KUBECONFIG environment variable from GitHub secret
       - name: Configure kubectl with Kubeconfig
-        run: echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
 
       # Step 4: Verify kubectl can access your cluster
       - name: Check Kubernetes cluster

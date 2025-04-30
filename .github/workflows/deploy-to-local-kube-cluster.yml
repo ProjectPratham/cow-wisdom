@@ -87,7 +87,7 @@ jobs:
       - name: Modify Hosts File
         run: |
             $hostsFile = "C:\Windows\System32\drivers\etc\hosts"
-            $entry = "127.0.0.1   example.local"
+            $entry = "127.0.0.1   wisecow.local"
   
             # Check if the hosts file exists
             if (-not (Test-Path $hostsFile)) {

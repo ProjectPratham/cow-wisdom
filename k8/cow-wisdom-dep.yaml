@@ -17,3 +17,5 @@ spec:
           image: pratham0416/wisecow:latest
           ports:
             - containerPort: 4499
+
+#

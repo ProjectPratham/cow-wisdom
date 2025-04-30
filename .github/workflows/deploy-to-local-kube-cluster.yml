@@ -1,0 +1,49 @@
+name: Deploy to Local Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline for Docker Image"]  # Match your first workflow's name
+    types:
+      - completed
+
+  push:
+    branches: [main]
+    paths:
+      - 'k8s/**'
+
+jobs:
+  deploy-to-local-k8s:
+    if: >
+      github.event_name == 'push' || 
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        run: |
+          kubectl version --client
+          kubectl config use-context docker-desktop  # or minikube
+
+      - name: Conditionally install cert-manager
+        run: |
+          if ! kubectl get ns cert-manager &> /dev/null; then
+            echo "Installing cert-manager..."
+            kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+          else
+            echo "cert-manager already installed."
+          fi
+
+      - name: Conditionally install NGINX ingress controller
+        run: |
+          if ! kubectl get ns ingress-nginx &> /dev/null; then
+            echo "Installing ingress-nginx..."
+            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+          else
+            echo "Ingress NGINX already installed."
+          fi
+
+      - name: Deploy all Kubernetes manifests
+        run: kubectl apply -f k8s/

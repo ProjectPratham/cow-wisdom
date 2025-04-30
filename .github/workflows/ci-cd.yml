@@ -1,4 +1,4 @@
-name: CD Pipeline - Deploy to Kubernetes
+name: CI Pipeline for Docker Image
 
 on:
   push:

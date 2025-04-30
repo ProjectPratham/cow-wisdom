@@ -1,37 +1,39 @@
 name: CD Pipeline - Deploy to Kubernetes
 
+
 on:
   push:
     branches:
-      - main  # Change this to your default branch (e.g., 'master'
+      - main  # Change this to your default branch (e.g., 'master')
+    paths:
+      - 'Dockerfile'
+      - 'wisecow.sh'
+  pull_request:
+    branches:
+      - main  # Change this to your default branch (e.g., 'master')
+    paths:
+      - 'Dockerfile'
+      - 'wisecow.sh'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest  # Runs on the latest Ubuntu GitHub Actions runner
-
     steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Step 2: Set up kubectl (Kubernetes CLI)
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          version: 'v1.21.0'  # Use the desired kubectl version
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Step 3: Configure kubectl to access your Kubernetes cluster
-      - name: Set up Kubeconfig
-        run: |
-            echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig.yaml
-            export KUBECONFIG=kubeconfig.yaml
-
-      # Step 4: Update the Deployment with the new Docker image
-      - name: Update Kubernetes Deployment with new Docker image
-        run: |
-          kubectl set image deployment/cow-wisdom-deployment cow-wisdom=pratham0416/wisecow:latest  # Use your image and tag here
-
-      # Step 5: (Optional) Verify the deployment
-      - name: Verify Deployment
-        run: |
-          kubectl rollout status deployment/cow-wisdom-deployment  # Ensure the deployment succeeds
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: pratham0416/wisecow:latest

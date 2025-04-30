@@ -15,11 +15,15 @@ RUN apt-get update && apt-get install && apt install \
 WORKDIR /app
 
 # Clone your GitHub repository (replace with your actual repo)
-RUN git clone https://github.com/nyrahul/wisecow.git .
+#RUN git clone https://github.com/nyrahul/wisecow.git .
 
-RUN chmod +x wisecow.sh
+#RUN chmod +x wisecow.sh
 # Make the script executable
+# Copy the local wisecow.sh script into the image
+COPY wisecow.sh /app/wisecow.sh
 
+# Make the script executable
+RUN chmod +x /app/wisecow.sh
 
 # Expose the default port
 EXPOSE 4499

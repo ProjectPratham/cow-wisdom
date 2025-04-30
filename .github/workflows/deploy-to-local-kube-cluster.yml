@@ -30,19 +30,20 @@ jobs:
         run: |
            if (-not (kubectl get ns cert-manager -ErrorAction SilentlyContinue)) {
             Write-Host "Installing cert-manager..."
-            kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+            kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.10.0/cert-manager.yaml
             } else {
             Write-Host "cert-manager already installed."
             } 
 
       - name: Conditionally install NGINX ingress controller
         run: |
-          if (-not (kubectl get ns cert-manager -ErrorAction SilentlyContinue)) {
-          Write-Host "Installing cert-manager..."
-          kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+          if (-not (kubectl get ns ingress-nginx -ErrorAction SilentlyContinue)) {
+            Write-Host "Installing ingress-nginx..."
+            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
           } else {
-          Write-Host "cert-manager already installed."
+            Write-Host "Ingress NGINX already installed."
           }
+
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f k8/

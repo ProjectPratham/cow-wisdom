@@ -15,9 +15,7 @@ on:
 # .github/workflows/deploy-on-arc.yml
 jobs:
   deploy:
-    if: >
-      github.event_name == 'push' || 
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    
     runs-on: [self-hosted, arc-runner-set]  # Match the label you added in ARC Helm config
     steps:
       - name: Checkout

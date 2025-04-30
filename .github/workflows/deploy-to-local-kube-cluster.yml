@@ -35,16 +35,26 @@ jobs:
             Write-Host "cert-manager already installed."
             } 
 
-      - name: Conditionally install NGINX ingress controller
+      - name: Reapply Kubernetes manifests until ingress controller is ready
         run: |
-          if (-not (kubectl get ns ingress-nginx -ErrorAction SilentlyContinue)) {
-            Write-Host "Installing ingress-nginx..."
-            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-          } else {
-            Write-Host "Ingress NGINX already installed."
-          }
-
-
+            # Set the duration for retries and interval between tries
+            $limit = 600  # 10 minutes
+            $interval = 30  # Reapply every 30 seconds
+            $end = (Get-Date).AddSeconds($limit)
+  
+            # Loop to reapply the manifest until the time limit is reached
+            while ((Get-Date) -lt $end) {
+  
+                # Check if ingress-nginx pods are ready
+                $podsReady = kubectl get pods -n ingress-nginx --field-selector=status.phase=Running
+                if ($podsReady) {
+                    Write-Host "Ingress controller is ready!"
+                    break
+                }
+  
+                Write-Host "Ingress controller is not ready, retrying..."
+                Start-Sleep -Seconds $interval
+            }
       - name: Deploy to Kubernetes
         run: kubectl apply -f k8/
 
